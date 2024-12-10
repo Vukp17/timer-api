@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { RegisterDto } from './dto/register.dto';
@@ -22,19 +22,28 @@ export class AuthService {
 
     async login(dto: LoginDto) {
         const user = await this.userService.findUnique(dto.email);
-        console.log(user);
-        this.userService.validatePassword(dto.password, user.password);
+        if (!user) {
+          throw new UnauthorizedException('Invalid credentials');
+        }
+    
+        const isPasswordValid = await this.userService.validatePassword(dto.password, user.password);
+        if (!isPasswordValid) {
+          throw new UnauthorizedException('Invalid credentials');
+        }
+    
         const payload = { username: user.username, sub: user.id };
-
-
         return {
-            access_token: this.jwtService.sign(payload),
+          access_token: this.jwtService.sign(payload),
         };
-    }
-
-    async register(dto: RegisterDto) {
-        console.log(dto);
+      }
+    
+      async register(dto: RegisterDto) {
+        const existingUser = await this.userService.findUnique(dto.email);
+        if (existingUser) {
+          throw new BadRequestException('Email already in use');
+        }
+    
         await this.userService.create(dto.username, dto.email, dto.password);
         return { message: 'User registered successfully' };
-    }
+      }
 }
