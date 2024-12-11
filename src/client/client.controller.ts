@@ -19,7 +19,7 @@ export class ClientController {
         @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'asc'
       ) {
         console.log(searchQuery, sortField, sortOrder);
-        return this.clientService.getClientsForUser(req.user.sub,  sortField,searchQuery, sortOrder);
+        return this.clientService.getClientsForUser(req.user.sub,  searchQuery,sortField, sortOrder);
       }
 
     @UseGuards(AuthGuard)
