@@ -6,8 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaService } from './prisma/prisma.service';
 import { ProjectModule } from './project/project.module';
-import { GlobalAuthGuard } from './guards/global-auth.guard';
-import { APP_GUARD } from '@nestjs/core';
+import { ClientModule } from './client/client.module';
 
 @Module({
   imports: [UserModule, AuthModule,
@@ -15,9 +14,10 @@ import { APP_GUARD } from '@nestjs/core';
       envFilePath: `.env.${process.env.NODE_ENV || 'development'}`, // Load .env files based on NODE_ENV
       isGlobal: true, // Make config globally available
     }),
-    ProjectModule,],
+    ProjectModule,
+    ClientModule],
   controllers: [AppController],
-  providers: [AppService, PrismaService
+  providers: [AppService, PrismaService,
   ],
   exports: [PrismaService],
 })
