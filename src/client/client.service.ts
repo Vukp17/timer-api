@@ -1,35 +1,41 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Client,Prisma } from '@prisma/client';
+import { Client, Prisma } from '@prisma/client';
 @Injectable()
 export class ClientService {
-    constructor(private prisma: PrismaService) {}
-    async getClientsForUser(userId: number, searchQuery?: string): Promise<Client[]> {
-        const searchConditions = searchQuery
-          ? {
-              OR: [
-                {
-                  name: {
-                    contains: searchQuery,
-                  },
+    constructor(private prisma: PrismaService) { }
+    async getClientsForUser(
+      userId: number,
+      searchQuery?: string,
+      sortField?: string,
+      sortOrder: 'asc' | 'desc' = 'asc'
+    ): Promise<Client[]> {
+      const searchConditions = searchQuery
+        ? {
+            OR: [
+              {
+                name: {
+                  contains: searchQuery,
                 },
-                {
-                  email: {
-                    contains: searchQuery,
-                  },
+              },
+              {
+                email: {
+                  contains: searchQuery,
                 },
-              ],
-            }
-          : {};
+              },
+            ],
+          }
+        : {};
     
-        return this.prisma.client.findMany({
-          where: {
-            userId,
-            ...searchConditions,
-          },
-        });
-      }
-    
+      return this.prisma.client.findMany({
+        where: {
+          userId,
+          ...searchConditions,
+        },
+        orderBy: sortField ? { [sortField]: sortOrder } : undefined,
+      });
+    }
+
     async createClient(data: Prisma.ClientCreateInput): Promise<Client> {
         return this.prisma.client.create({
             data,

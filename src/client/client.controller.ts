@@ -12,10 +12,15 @@ export class ClientController {
     @Get(
 
     )
-  async getUserClients(@Req() req: UserReq, @Query('search') searchQuery?: string) {
-        console.log(searchQuery);
-        return this.clientService.getClientsForUser(req.user.sub,searchQuery);
-    }
+    async getUserClients(
+        @Req() req: UserReq,
+        @Query('search') searchQuery?: string,
+        @Query('sortField') sortField?: string,
+        @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'asc'
+      ) {
+        console.log(searchQuery, sortField, sortOrder);
+        return this.clientService.getClientsForUser(req.user.sub,  sortField,searchQuery, sortOrder);
+      }
 
     @UseGuards(AuthGuard)
     @Post()
