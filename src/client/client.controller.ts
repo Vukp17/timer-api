@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard, UserReq } from 'src/auth/auth.guard';
 import { ClientService } from './client.service';
 import { ClientCreateDto } from './dto/client-create.dto';
@@ -9,9 +9,12 @@ export class ClientController {
     constructor(private readonly clientService: ClientService) { }
 
     @UseGuards(AuthGuard)
-    @Get()
-    async getUserClients(@Req() req: UserReq) {
-        return this.clientService.getClientsForUser(req.user.sub);
+    @Get(
+
+    )
+  async getUserClients(@Req() req: UserReq, @Query('search') searchQuery?: string) {
+        console.log(searchQuery);
+        return this.clientService.getClientsForUser(req.user.sub,searchQuery);
     }
 
     @UseGuards(AuthGuard)

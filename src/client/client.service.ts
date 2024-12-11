@@ -4,13 +4,32 @@ import { Client,Prisma } from '@prisma/client';
 @Injectable()
 export class ClientService {
     constructor(private prisma: PrismaService) {}
-    async getClientsForUser(userId: number) {
+    async getClientsForUser(userId: number, searchQuery?: string): Promise<Client[]> {
+        const searchConditions = searchQuery
+          ? {
+              OR: [
+                {
+                  name: {
+                    contains: searchQuery,
+                  },
+                },
+                {
+                  email: {
+                    contains: searchQuery,
+                  },
+                },
+              ],
+            }
+          : {};
+    
         return this.prisma.client.findMany({
-            where: {
-                userId,
-            },
+          where: {
+            userId,
+            ...searchConditions,
+          },
         });
-    }
+      }
+    
     async createClient(data: Prisma.ClientCreateInput): Promise<Client> {
         return this.prisma.client.create({
             data,
