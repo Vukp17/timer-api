@@ -1,5 +1,5 @@
 // project/project.controller.ts
-import { Body, Controller, Get, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { AuthGuard, UserReq } from 'src/auth/auth.guard';
 import { ProjectCreateDto } from './dto/project-create.dto';
@@ -50,6 +50,19 @@ export class ProjectController {
             },
         };
         return this.projectService.updateProject(Number(req.params.id), result);
+    }
+
+    @UseGuards(AuthGuard)
+    @Delete(':id')
+    async deleteProject(@Req() req: UserReq) {
+        return this.projectService.deleteProject(Number(req.params.id));
+    }
+
+
+    @UseGuards(AuthGuard)
+    @Get('all')
+    async getAllProjects(@Req() req: UserReq) {
+        return this.projectService.getAllProjects(req.user.sub);
     }
 
 
