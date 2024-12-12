@@ -54,4 +54,9 @@ export class ClientController {
     async deleteClient(@Req() req: UserReq) {
         return this.clientService.deleteClient(Number(req.params.id));
     }
+    @UseGuards(AuthGuard)
+    @Get('all')
+    async getAllClients(@Req() req: UserReq) {
+        return this.clientService.getAllClients(req.user.sub);
+    }
 }

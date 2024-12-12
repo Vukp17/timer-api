@@ -61,5 +61,9 @@ export class ClientService {
         });
     }
 
+    async getAllClients(userId): Promise<Client[]> {
+        return this.prisma.client.findMany();
+    }
+
 
 }
