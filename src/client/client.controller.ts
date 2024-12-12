@@ -16,10 +16,11 @@ export class ClientController {
         @Req() req: UserReq,
         @Query('search') searchQuery?: string,
         @Query('sortField') sortField?: string,
-        @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'asc'
+        @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'asc',
+        @Query('page') page?: number,
+        @Query('pageSize') pageSize?: number,
       ) {
-        console.log(searchQuery, sortField, sortOrder);
-        return this.clientService.getClientsForUser(req.user.sub,  searchQuery,sortField, sortOrder);
+        return this.clientService.getClientsForUser(page, pageSize,req.user.sub,  searchQuery,sortField, sortOrder);
       }
 
     @UseGuards(AuthGuard)

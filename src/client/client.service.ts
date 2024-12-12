@@ -5,6 +5,8 @@ import { Client, Prisma } from '@prisma/client';
 export class ClientService {
     constructor(private prisma: PrismaService) { }
     async getClientsForUser(
+      page: number,
+      pageSize: number,
       userId: number,
       searchQuery?: string,
       sortField?: string,
@@ -33,6 +35,8 @@ export class ClientService {
           ...searchConditions,
         },
         orderBy: sortField ? { [sortField]: sortOrder } : undefined,
+        skip: (page - 1) * pageSize,
+        take: pageSize,
       });
     }
 
