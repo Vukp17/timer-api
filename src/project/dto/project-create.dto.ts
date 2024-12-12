@@ -4,8 +4,7 @@ export interface ProjectCreateDto {
     description?: string;
     userId: number;
     clientId?: number;
-    createdAt: Date;
-    updatedAt: Date;
+
 
 
 }

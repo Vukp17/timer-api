@@ -17,10 +17,10 @@ export class ClientController {
         @Query('search') searchQuery?: string,
         @Query('sortField') sortField?: string,
         @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'asc',
-        @Query('page') page?: number,
-        @Query('pageSize') pageSize?: number,
+        @Query('page') page?: string,
+        @Query('pageSize') pageSize?: string,
       ) {
-        return this.clientService.getClientsForUser(page, pageSize,req.user.sub,  searchQuery,sortField, sortOrder);
+        return this.clientService.getClientsForUser(Number(page), Number(pageSize), req.user.sub, searchQuery, sortField, sortOrder);
       }
 
     @UseGuards(AuthGuard)

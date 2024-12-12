@@ -1,8 +1,9 @@
 // project/project.controller.ts
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { AuthGuard, UserReq } from 'src/auth/auth.guard';
 import { ProjectCreateDto } from './dto/project-create.dto';
+import { Project } from '@prisma/client';
 
 @Controller('project')
 export class ProjectController {
@@ -10,23 +11,49 @@ export class ProjectController {
 
     @UseGuards(AuthGuard)
     @Get()
-    async getUserProjects(@Req() req: UserReq) {
-        return this.projectService.getProjectsForUser(req.user.sub);
+    async getUserProjects(@Req() req: UserReq,
+        @Query('search') searchQuery?: string,
+        @Query('sortField') sortField?: string,
+        @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'asc',
+        @Query('page') page?: string,
+        @Query('pageSize') pageSize?: string,) {
+        return this.projectService.getProjectsForUser(Number(page), Number(pageSize), req.user.sub, searchQuery, sortField, sortOrder);
     }
 
     @UseGuards(AuthGuard)
     @Post()
     async createProject(@Req() req: UserReq, @Body() data: ProjectCreateDto) {
+        const { clientId, ...rest } = data;
         const result = {
-            ...data,
+            ...rest,
             user: {
-                connect: { id: req.user.sub }
-            }
-        }
+              connect: { id: req.user.sub },
+            },
+            client: {
+              connect: { id: data.clientId },
+            },
+          };
         return this.projectService.createProject(result);
     }
 
-    
+    @UseGuards(AuthGuard)
+    @Put(':id')
+    async updateProject(@Req() req: UserReq, @Body() data: Project) {
+        const { id, userId,clientId, ...updateData } = data; // Destructure to exclude id
+        const result = {
+            ...updateData,
+            user: {
+                connect: { id: req.user.sub },
+            },
+            client: {
+                connect: { id: data.clientId },
+            },
+        };
+        return this.projectService.updateProject(Number(req.params.id), result);
+    }
+
+
+
 
 
 
