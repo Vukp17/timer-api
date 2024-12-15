@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Client, Prisma } from '@prisma/client';
+import { CommonService } from '../common/common.service';
 @Injectable()
 export class ClientService {
-    constructor(private prisma: PrismaService) { }
+    constructor(private prisma: PrismaService,private commonService:CommonService) { }
     async getClientsForUser(
       page: number,
       pageSize: number,
@@ -34,7 +35,7 @@ export class ClientService {
           userId,
           ...searchConditions,
         },
-        orderBy: sortField ? { [sortField]: sortOrder } : undefined,
+        orderBy: this.commonService.getOrderBy(sortField, sortOrder),
         skip: (page - 1) * pageSize,
         take: pageSize,
       });

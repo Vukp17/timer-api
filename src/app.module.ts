@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaService } from './prisma/prisma.service';
 import { ProjectModule } from './project/project.module';
 import { ClientModule } from './client/client.module';
+import { CommonService } from './common/common.service';
 
 @Module({
   imports: [UserModule, AuthModule,
@@ -17,7 +18,7 @@ import { ClientModule } from './client/client.module';
     ProjectModule,
     ClientModule],
   controllers: [AppController],
-  providers: [AppService, PrismaService,
+  providers: [AppService, PrismaService, CommonService,
   ],
   exports: [PrismaService],
 })

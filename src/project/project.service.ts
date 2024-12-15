@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { Project, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { CommonService } from 'src/common/common.service';
 @Injectable()
 export class ProjectService {
-    constructor(private prisma: PrismaService) { }
+    constructor(private prisma: PrismaService,private commonService:CommonService) { }
     async getProjectsForUser(
         page: number,
         pageSize: number,
         userId: number,
         searchQuery?: string,
         sortField?: string,
-        sortOrder: 'asc' | 'desc' = 'asc'): Promise<Project[]> {
+        sortOrder: 'asc' | 'desc' = 'asc') {
         const searchConditions = searchQuery
             ? {
                 OR: [
@@ -34,9 +35,13 @@ export class ProjectService {
                 userId,
                 ...searchConditions,
             },
-            orderBy: sortField ? { [sortField]: sortOrder } : undefined,
+            
+            orderBy: this.commonService.getOrderBy(sortField, sortOrder),
             skip: (page - 1) * pageSize,
             take: pageSize,
+            include: {
+                client: true,
+            }
         });
     }
 
@@ -44,14 +49,21 @@ export class ProjectService {
     async createProject(data: Prisma.ProjectCreateInput): Promise<Project> {
         return this.prisma.project.create({
             data,
+            include:{
+                client:true,
+            }
+
         });
     }
-    async updateProject(id: number, data: Prisma.ProjectUpdateInput): Promise<Project> {
+    async updateProject(id: number, data: Prisma.ProjectUpdateInput) {
         return this.prisma.project.update({
             where: {
                 id,
             },
             data,
+            include:{
+                client:true,
+            }
         });
     }
     async deleteProject(id: number): Promise<Project> {
