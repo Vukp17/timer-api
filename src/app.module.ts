@@ -8,6 +8,7 @@ import { PrismaService } from './prisma/prisma.service';
 import { ProjectModule } from './project/project.module';
 import { ClientModule } from './client/client.module';
 import { CommonService } from './common/common.service';
+import { TimerModule } from './timer/timer.module';
 
 @Module({
   imports: [UserModule, AuthModule,
@@ -16,7 +17,8 @@ import { CommonService } from './common/common.service';
       isGlobal: true, // Make config globally available
     }),
     ProjectModule,
-    ClientModule],
+    ClientModule,
+    TimerModule],
   controllers: [AppController],
   providers: [AppService, PrismaService, CommonService,
   ],
