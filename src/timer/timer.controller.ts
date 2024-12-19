@@ -24,25 +24,25 @@ export class TimerController {
 
     @UseGuards(AuthGuard)
     @Post()
-    createTimer(@Req() req: UserReq,@Body() data: TimerCreateDto) {
+    createTimer(@Req() req: UserReq, @Body() data: TimerCreateDto) {
         console.log(data);
         const { projectId, tagId, ...rest } = data;
         const timer: Prisma.TimerCreateInput = {
             ...rest,
             user: {
-            connect: {
-                id: req.user.sub
-            }
+                connect: {
+                    id: req.user.sub
+                }
             },
             project: data.projectId ? {
-            connect: {
-                id: data.projectId
-            }
+                connect: {
+                    id: data.projectId
+                }
             } : undefined,
             tag: data.tagId ? {
-            connect: {
-                id: data.tagId
-            }
+                connect: {
+                    id: data.tagId
+                }
             } : undefined
         }
         return this.timerService.create(timer);
@@ -50,7 +50,7 @@ export class TimerController {
 
     @UseGuards(AuthGuard)
     @Put(':id')
-    updateTimer(@Req() req: UserReq, @Body()data: Prisma.TimerUpdateInput) {
+    updateTimer(@Req() req: UserReq, @Body() data: Prisma.TimerUpdateInput) {
         return this.timerService.update(Number(req.params.id), data);
     }
 

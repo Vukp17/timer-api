@@ -21,7 +21,12 @@ export class TimerService {
             },
             orderBy: this.commonService.getOrderBy(sortField, sortOrder),
             take: pageSize,
-            skip: page * pageSize
+            skip: page * pageSize,
+            include: {
+                project: true,
+                
+            },
+
         })
     }
     create(timer: Prisma.TimerCreateInput) {
