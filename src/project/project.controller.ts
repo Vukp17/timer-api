@@ -11,12 +11,14 @@ export class ProjectController {
 
     @UseGuards(AuthGuard)
     @Get()
-    async getUserProjects(@Req() req: UserReq,
+    async getUserProjects(
+        @Req() req: UserReq,
         @Query('search') searchQuery?: string,
         @Query('sortField') sortField?: string,
         @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'asc',
         @Query('page') page?: string,
-        @Query('pageSize') pageSize?: string,) {
+        @Query('pageSize') pageSize?: string
+    ) {
         return this.projectService.getProjectsForUser(Number(page), Number(pageSize), req.user.sub, searchQuery, sortField, sortOrder);
     }
 
