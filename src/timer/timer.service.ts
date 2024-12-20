@@ -18,25 +18,36 @@ export class TimerService {
         searchQuery?: string,
         sortField?: string,
         sortOrder: 'asc' | 'desc' = 'asc'
-    ): Promise<GroupedTimers> {
-        const timers = await this.prismaService.timer.findMany({
-            where: {
-                userId: userId,
-                description: {
-                    contains: searchQuery,
+    ): Promise<{ groupedTimers: GroupedTimers; totalCount: number }> {
+        const [timers, total] = await this.prismaService.$transaction([
+            this.prismaService.timer.findMany({
+                where: {
+                    userId: userId,
+                    description: {
+                        contains: searchQuery,
+                    },
                 },
-            },
-            orderBy: this.commonService.getOrderBy(sortField, sortOrder),
-            take: pageSize,
-            skip: page * pageSize,
-            include: {
-                project: true,
-                tag: true,
-            },
-
-        });
+                orderBy: this.commonService.getOrderBy(sortField, sortOrder),
+                take: pageSize,
+                skip: page * pageSize,
+                include: {
+                    project: true,
+                    tag: true,
+                },
+            }),
+            this.prismaService.timer.count({
+                where: {
+                    userId: userId,
+                    description: {
+                        contains: searchQuery,
+                    },
+                },
+            }),
+        ]);
 
         // Group timers by day
+        const totalCount = Math.ceil(total / pageSize);
+
         const groupedTimers = timers.reduce((acc, timer) => {
             const date = new Date(timer.startTime).toISOString().split('T')[0];
             if (!acc[date]) {
@@ -46,11 +57,13 @@ export class TimerService {
             return acc;
         }, {} as GroupedTimers);
 
-        return groupedTimers;
+        return { groupedTimers, totalCount };
     }
+
     create(timer: Prisma.TimerCreateInput) {
         return this.prismaService.timer.create({
-            data: timer
+            data: timer,
+            
         })
     }
     update(id: number, timer: Prisma.TimerUpdateInput) {
@@ -58,7 +71,11 @@ export class TimerService {
             where: {
                 id: id
             },
-            data: timer
+            data: timer,
+            include:{
+                project:true,
+                tag:true
+            }
         })
     }
     delete(id: number) {

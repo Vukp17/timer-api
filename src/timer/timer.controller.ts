@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { TimerService } from './timer.service';
 import { AuthGuard, UserReq } from 'src/auth/auth.guard';
-import { Prisma } from '@prisma/client';
+import { Prisma, Project } from '@prisma/client';
 import { TimerCreateDto } from './dto/timer-create.dto';
 
 @Controller('timer')
@@ -50,8 +50,9 @@ export class TimerController {
 
     @UseGuards(AuthGuard)
     @Put(':id')
-    updateTimer(@Req() req: UserReq, @Body() data: Prisma.TimerUpdateInput) {
-        return this.timerService.update(Number(req.params.id), data);
+    updateTimer(@Req() req: UserReq, @Body() data: Project) {
+        return this.timerService.update(Number(req.params.id), 
+        data);
     }
 
 }
