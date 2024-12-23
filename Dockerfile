@@ -14,3 +14,4 @@ EXPOSE 5432
 
 # Start the PostgreSQL server when the container launches
 CMD ["postgres"]
+# docker run -d --name pgadmin_container -p 8080:80 -e PGADMIN_DEFAULT_EMAIL=admin@example.com -e PGADMIN_DEFAULT_PASSWORD=admin --network="bridge" dpage/pgadmin4
