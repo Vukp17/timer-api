@@ -29,4 +29,19 @@ export class AuthController {
   getProfile(@Request() req: UserReq) {
     return req.user;
   }
+
+
+  @UseGuards(AuthGuard)
+  @Get('logout')
+  async logout(@Request() req: UserReq) {
+    return this.authService.logout();
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('verify')
+  async verify(@Request() req: UserReq) {
+    return req.user;
+  }
+
+
 }

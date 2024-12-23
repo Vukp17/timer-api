@@ -7,5 +7,6 @@ export interface ExtendedTimer extends Timer {
 }
 
 export interface GroupedTimers {
-  [key: string]: ExtendedTimer[];
+  date: string;
+  timers: ExtendedTimer[];
 }

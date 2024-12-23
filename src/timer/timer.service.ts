@@ -18,7 +18,7 @@ export class TimerService {
         searchQuery?: string,
         sortField?: string,
         sortOrder: 'asc' | 'desc' = 'asc'
-    ): Promise<{ groupedTimers: GroupedTimers; totalCount: number }> {
+    ): Promise<{ groupedTimers: GroupedTimers[]; totalCount: number }> {
         const [timers, total] = await this.prismaService.$transaction([
             this.prismaService.timer.findMany({
                 where: {
@@ -50,12 +50,14 @@ export class TimerService {
 
         const groupedTimers = timers.reduce((acc, timer) => {
             const date = new Date(timer.startTime).toISOString().split('T')[0];
-            if (!acc[date]) {
-                acc[date] = [];
+            let group = acc.find(g => g.date === date);
+            if (!group) {
+                group = { date, timers: [] };
+                acc.push(group);
             }
-            acc[date].push(timer);
+            group.timers.push(timer);
             return acc;
-        }, {} as GroupedTimers);
+        }, [] as GroupedTimers[]);
 
         return { groupedTimers, totalCount };
     }

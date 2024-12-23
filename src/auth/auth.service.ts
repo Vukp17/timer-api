@@ -46,4 +46,17 @@ export class AuthService {
         await this.userService.create(dto.username, dto.email, dto.password);
         return { message: 'User registered successfully' };
       }
+
+      async logout() {
+        return { message: 'User logged out successfully' };
+      }
+
+      async verifyToken(token: string) {
+        try {
+          const decoded = this.jwtService.verify(token);
+          return decoded;
+        } catch (error) {
+          throw new UnauthorizedException('Invalid token');
+        }
+      }
 }
