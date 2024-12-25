@@ -87,4 +87,18 @@ export class TimerService {
             }
         })
     }
+
+    async getRunningTimer(userId: number) {
+        const data = await this.prismaService.timer.findFirst({
+            where: {
+                userId: userId,
+                endTime: null
+            },
+            include: {
+                project: true,
+                tag: true
+            }
+        })
+        return data;
+    }
 }

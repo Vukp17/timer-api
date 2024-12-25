@@ -55,4 +55,10 @@ export class TimerController {
         data);
     }
 
+    @UseGuards(AuthGuard)
+    @Get('running')
+    getRunningTimer(@Req() req: UserReq) {
+        return this.timerService.getRunningTimer(req.user.sub);
+    }
+
 }
