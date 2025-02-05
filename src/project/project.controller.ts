@@ -4,6 +4,7 @@ import { ProjectService } from './project.service';
 import { AuthGuard, UserReq } from 'src/auth/auth.guard';
 import { ProjectCreateDto } from './dto/project-create.dto';
 import { Project } from '@prisma/client';
+import { successResponse } from 'src/response';
 
 @Controller('project')
 export class ProjectController {
@@ -29,19 +30,20 @@ export class ProjectController {
         const result = {
             ...rest,
             user: {
-              connect: { id: req.user.sub },
+                connect: { id: req.user.sub },
             },
             client: {
-              connect: { id: data.clientId },
+                connect: { id: data.clientId },
             },
-          };
-        return this.projectService.createProject(result);
+        };
+        const response = await this.projectService.createProject(result);
+        return successResponse('Project created successfully', response);
     }
 
     @UseGuards(AuthGuard)
     @Put(':id')
     async updateProject(@Req() req: UserReq, @Body() data: Project) {
-        const { id, userId,clientId, ...updateData } = data; // Destructure to exclude id
+        const { id, userId, clientId, ...updateData } = data; // Destructure to exclude id
         const result = {
             ...updateData,
             user: {
@@ -51,7 +53,8 @@ export class ProjectController {
                 connect: { id: data.clientId },
             },
         };
-        return this.projectService.updateProject(Number(req.params.id), result);
+        const response = await this.projectService.updateProject(Number(req.params.id), result);
+        return successResponse('Project updated successfully', response);
     }
 
     @UseGuards(AuthGuard)

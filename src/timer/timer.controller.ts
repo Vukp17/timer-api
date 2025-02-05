@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { TimerService } from './timer.service';
 import { AuthGuard, UserReq } from 'src/auth/auth.guard';
-import { Prisma, Project } from '@prisma/client';
+import { Prisma, Project, Timer } from '@prisma/client';
 import { TimerCreateDto } from './dto/timer-create.dto';
 
 @Controller('timer')
@@ -50,9 +50,28 @@ export class TimerController {
 
     @UseGuards(AuthGuard)
     @Put(':id')
-    updateTimer(@Req() req: UserReq, @Body() data: Project) {
-        return this.timerService.update(Number(req.params.id), 
-        data);
+    updateTimer(@Req() req: UserReq, @Body() data: Timer) {
+        const { projectId, tagId, ...rest } = data;
+
+        const res = {
+            ...rest,
+            user: {
+                connect: {
+                    id: req.user.sub
+                }
+            },
+            project: data.projectId ? {
+                connect: {
+                    id: data.projectId
+                }
+            } : undefined,
+            tag: data.tagId ? {
+                connect: {
+                    id: data.tagId
+                }
+            } : undefined
+        }
+        return this.timerService.update(Number(req.params.id), res);
     }
 
     @UseGuards(AuthGuard)
