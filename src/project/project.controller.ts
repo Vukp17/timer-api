@@ -4,7 +4,7 @@ import { ProjectService } from './project.service';
 import { AuthGuard, UserReq } from 'src/auth/auth.guard';
 import { ProjectCreateDto } from './dto/project-create.dto';
 import { Project } from '@prisma/client';
-import { successResponse } from 'src/response';
+import { errorResponse, successResponse } from 'src/response';
 
 @Controller('project')
 export class ProjectController {
@@ -20,59 +20,77 @@ export class ProjectController {
         @Query('page') page?: string,
         @Query('pageSize') pageSize?: string
     ) {
-        return this.projectService.getProjectsForUser(Number(page), Number(pageSize), req.user.sub, searchQuery, sortField, sortOrder);
+        try {
+            const response = await this.projectService.getProjectsForUser(Number(page), Number(pageSize), req.user.sub, searchQuery, sortField, sortOrder);
+            return successResponse('Projects fetched successfully', response);
+        } catch (error) {
+            return errorResponse('Failed to fetch projects', error);
+        }
     }
 
     @UseGuards(AuthGuard)
     @Post()
     async createProject(@Req() req: UserReq, @Body() data: ProjectCreateDto) {
-        const { clientId, ...rest } = data;
-        const result = {
-            ...rest,
-            user: {
-                connect: { id: req.user.sub },
-            },
-            client: {
-                connect: { id: data.clientId },
-            },
-        };
-        const response = await this.projectService.createProject(result);
-        return successResponse('Project created successfully', response);
+        try {
+            const { clientId, ...rest } = data;
+            const result = {
+                ...rest,
+                user: {
+                    connect: { id: req.user.sub },
+                },
+                client: {
+                    connect: { id: data.clientId },
+                },
+            };
+            const response = await this.projectService.createProject(result);
+            return successResponse('Project created successfully', response);
+        } catch (error) {
+            return errorResponse('Failed to create project', error);
+        }
     }
 
     @UseGuards(AuthGuard)
     @Put(':id')
     async updateProject(@Req() req: UserReq, @Body() data: Project) {
-        const { id, userId, clientId, ...updateData } = data; // Destructure to exclude id
-        const result = {
-            ...updateData,
-            user: {
-                connect: { id: req.user.sub },
-            },
-            client: {
-                connect: { id: data.clientId },
-            },
-        };
-        const response = await this.projectService.updateProject(Number(req.params.id), result);
-        return successResponse('Project updated successfully', response);
+        try {
+            const { id, userId, clientId, ...updateData } = data; // Destructure to exclude id
+            const result = {
+                ...updateData,
+                user: {
+                    connect: { id: req.user.sub },
+                },
+                client: {
+                    connect: { id: data.clientId },
+                },
+            };
+            const response = await this.projectService.updateProject(Number(req.params.id), result);
+            return successResponse('Project updated successfully', response);
+        } catch (error) {
+            return errorResponse('Failed to update project', error);
+        }
     }
 
     @UseGuards(AuthGuard)
     @Delete(':id')
     async deleteProject(@Req() req: UserReq) {
-        return this.projectService.deleteProject(Number(req.params.id));
+        try {
+            await this.projectService.deleteProject(Number(req.params.id));
+            return successResponse('Project deleted successfully', {});
+        } catch (error) {
+            return errorResponse('Failed to delete project', error);
+        }
     }
-
 
     @UseGuards(AuthGuard)
     @Get('all')
     async getAllProjects(@Req() req: UserReq) {
-        return this.projectService.getAllProjects(req.user.sub);
+        try {
+            const response = await this.projectService.getAllProjects(req.user.sub);
+            return successResponse('All projects fetched successfully', response);
+        } catch (error) {
+            return errorResponse('Failed to fetch all projects', error);
+        }
     }
-
-
-
-
-
-
 }
+
+
