@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class CommonService {
-
-
-
-
+    
     getOrderBy(sortField: string, sortOrder: 'asc' | 'desc') {
         if (!sortField) return undefined;
 
