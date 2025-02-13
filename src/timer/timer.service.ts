@@ -46,7 +46,7 @@ export class TimerService {
         ]);
 
         // Group timers by day
-        const totalCount = Math.ceil(total / pageSize);
+        const totalCount = total;
 
         const groupedTimers = timers.reduce((acc, timer) => {
             const date = new Date(timer.startTime).toISOString().split('T')[0];
