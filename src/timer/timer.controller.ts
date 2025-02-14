@@ -1,10 +1,12 @@
 // filepath: /c:/Dev/timer-api/src/timer/timer.controller.ts
-import { Body, Controller, Get, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
-import { TimerService } from './timer.service';
+import { Body, Controller, Get, Post, Put, Query, Req, UseGuards, DefaultValuePipe, ParseIntPipe } from '@nestjs/common';
+import { TimerService, WeeklyGroupedTimers } from './timer.service';
 import { AuthGuard, UserReq } from 'src/auth/auth.guard';
 import { Prisma, Timer } from '@prisma/client';
 import { TimerCreateDto } from './dto/timer-create.dto';
 import { successResponse, errorResponse } from 'src/response';
+import { JwtPayload } from 'jsonwebtoken';
+import { WeeklyGroupedTimersResponse } from './dto/grouped-timer.dto';
 
 @Controller('timer')
 export class TimerController {
@@ -112,5 +114,26 @@ export class TimerController {
         } catch (error) {
             return errorResponse('Failed to fetch running timer', error);
         }
+    }
+
+    @UseGuards(AuthGuard)
+    @Get('weekly')
+    async getTimersByWeeks(
+        @Query('page', new DefaultValuePipe(0), ParseIntPipe) page: number,
+        @Query('pageSize', new DefaultValuePipe(10), ParseIntPipe) pageSize: number,
+        @Query('searchQuery') searchQuery: string,
+        @Query('sortField') sortField: string,
+        @Query('sortOrder') sortOrder: 'asc' | 'desc',
+        @Req() req: UserReq,
+    ) {
+        const response = await this.timerService.getTimersByWeeks(
+            page,
+            pageSize,
+            req.user.sub,
+            searchQuery,
+            sortField,
+            sortOrder
+        );
+        return successResponse('Timers fetched successfully', response);
     }
 }

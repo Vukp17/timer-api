@@ -10,3 +10,15 @@ export interface GroupedTimers {
   date: string;
   timers: ExtendedTimer[];
 }
+
+export interface WeeklyGroupedTimers {
+  weekStart: string;
+  weekEnd: string;
+  totalHours: number;
+  days: GroupedTimers[];
+}
+
+export interface WeeklyGroupedTimersResponse {
+  weeklyTimers: WeeklyGroupedTimers[];
+  totalCount: number;
+}
