@@ -24,6 +24,7 @@ export class ProjectController {
             const response = await this.projectService.getProjectsForUser(Number(page), Number(pageSize), req.user.sub, searchQuery, sortField, sortOrder);
             return successResponse('Projects fetched successfully', response);
         } catch (error) {
+            console.log(error);
             return errorResponse('Failed to fetch projects', error);
         }
     }

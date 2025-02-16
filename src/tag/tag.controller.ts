@@ -22,7 +22,6 @@ export class TagController {
       const tags = await this.tagService.getTags(Number(page), Number(pageSize),req.user.sub, searchQuery, sortField, sortOrder);
       return successResponse('Tags fetched successfully', tags);
     } catch (error) {
-      console.log(error);
       return errorResponse('Failed to fetch tags', error);
     }
   }

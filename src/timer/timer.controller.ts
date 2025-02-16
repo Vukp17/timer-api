@@ -3,10 +3,9 @@ import { Body, Controller, Get, Post, Put, Query, Req, UseGuards, DefaultValuePi
 import { TimerService, WeeklyGroupedTimers } from './timer.service';
 import { AuthGuard, UserReq } from 'src/auth/auth.guard';
 import { Prisma, Timer } from '@prisma/client';
-import { TimerCreateDto } from './dto/timer-create.dto';
 import { successResponse, errorResponse } from 'src/response';
 import { JwtPayload } from 'jsonwebtoken';
-import { WeeklyGroupedTimersResponse } from './dto/grouped-timer.dto';
+import { TimerCreateDto, WeeklyGroupedTimersResponse } from './dto/grouped-timer.dto';
 
 @Controller('timer')
 export class TimerController {
@@ -75,7 +74,7 @@ export class TimerController {
     @Put(':id')
     async updateTimer(@Req() req: UserReq, @Body() data: Timer) {
         try {
-            const { projectId, tagId, ...rest } = data;
+            const { projectId, tagId, id, userId, ...rest} = data;
             const res = {
                 ...rest,
                 user: {
@@ -101,6 +100,7 @@ export class TimerController {
             const response = await this.timerService.update(Number(req.params.id), res);
             return successResponse('Timer updated successfully', response);
         } catch (error) {
+            console.log(error);
             return errorResponse('Failed to update timer', error);
         }
     }
@@ -136,4 +136,6 @@ export class TimerController {
         );
         return successResponse('Timers fetched successfully', response);
     }
+
+
 }

@@ -77,7 +77,7 @@ export class TimerService {
         searchQuery?: string,
         sortField?: string,
         sortOrder: 'asc' | 'desc' = 'asc'
-    ): Promise<{ weeklyTimers: WeeklyGroupedTimers[]; totalCount: number }> {
+    ): Promise<{ items: WeeklyGroupedTimers[]; totalCount: number, page: number, pageSize: number }> {
         const [timers, total] = await this.prismaService.$transaction([
             this.prismaService.timer.findMany({
                 where: {
@@ -149,7 +149,12 @@ export class TimerService {
         // Sort weeks
         weeklyTimers.sort((a, b) => b.weekStart.localeCompare(a.weekStart));
 
-        return { weeklyTimers, totalCount: total };
+        return { 
+            items:weeklyTimers,
+            totalCount: total,
+            page:page,
+            pageSize:pageSize
+        };
     }
 
 
