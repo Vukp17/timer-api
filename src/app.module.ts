@@ -9,6 +9,7 @@ import { ProjectModule } from './project/project.module';
 import { ClientModule } from './client/client.module';
 import { CommonService } from './common/common.service';
 import { TimerModule } from './timer/timer.module';
+import { TagModule } from './tag/tag.module';
 
 @Module({
   imports: [UserModule, AuthModule,
@@ -18,7 +19,8 @@ import { TimerModule } from './timer/timer.module';
     }),
     ProjectModule,
     ClientModule,
-    TimerModule],
+    TimerModule,
+    TagModule],
   controllers: [AppController],
   providers: [AppService, PrismaService, CommonService,
   ],

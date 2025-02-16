@@ -11,7 +11,7 @@ export class ProjectService {
         userId: number,
         searchQuery?: string,
         sortField?: string,
-        sortOrder: 'asc' | 'desc' = 'asc') {
+        sortOrder: 'asc' | 'desc' = 'asc'): Promise<{ items: Project[], total: number, page: number, pageSize: number }> {
         const searchConditions = searchQuery
             ? {
                 OR: [
@@ -29,13 +29,18 @@ export class ProjectService {
             }
             : {};
 
+        const whereClause = {
+            userId,
+            ...searchConditions,
+        };
 
-        return this.prisma.project.findMany({
-            where: {
-                userId,
-                ...searchConditions,
-            },
-            
+        // Get total count of matching records
+        const total = await this.prisma.project.count({
+            where: whereClause,
+        });
+
+        const projects = await this.prisma.project.findMany({
+            where: whereClause,
             orderBy: this.commonService.getOrderBy(sortField, sortOrder),
             skip: (page - 1) * pageSize,
             take: pageSize,
@@ -43,6 +48,13 @@ export class ProjectService {
                 client: true,
             }
         });
+        
+        return {
+            items: projects,
+            total,
+            page,
+            pageSize,
+        }
     }
 
 
@@ -73,11 +85,37 @@ export class ProjectService {
             },
         });
     }
-    async getAllProjects(userId: number): Promise<Project[]> {
-        return this.prisma.project.findMany({
-            where: {
-                userId,
-            },
+    async getAllProjects(
+        userId: number,
+        page: number = 1,
+        pageSize: number = 10,
+        sortField?: string,
+        sortOrder: 'asc' | 'desc' = 'asc'
+    ): Promise<{ items: Project[], total: number, page: number, pageSize: number }> {
+        const whereClause = {
+            userId,
+        };
+
+        // Get total count of matching records
+        const total = await this.prisma.project.count({
+            where: whereClause,
         });
+
+        const projects = await this.prisma.project.findMany({
+            where: whereClause,
+            orderBy: this.commonService.getOrderBy(sortField, sortOrder),
+            skip: (page - 1) * pageSize,
+            take: pageSize,
+            include: {
+                client: true,
+            }
+        });
+
+        return {
+            items: projects,
+            total,
+            page,
+            pageSize,
+        };
     }
 }

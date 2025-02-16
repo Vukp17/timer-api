@@ -12,7 +12,7 @@ export class ClientService {
       searchQuery?: string,
       sortField?: string,
       sortOrder: 'asc' | 'desc' = 'asc'
-    ): Promise<Client[]> {
+    ): Promise<{ items: Client[], total: number, page: number, pageSize: number }> {
       const searchConditions = searchQuery
         ? {
             OR: [
@@ -29,16 +29,30 @@ export class ClientService {
             ],
           }
         : {};
+
+      const whereClause = {
+        userId,
+        ...searchConditions,
+      };
     
-      return this.prisma.client.findMany({
-        where: {
-          userId,
-          ...searchConditions,
-        },
+      // Get total count of matching records
+      const total = await this.prisma.client.count({
+        where: whereClause,
+      });
+
+      const clients = await this.prisma.client.findMany({
+        where: whereClause,
         orderBy: this.commonService.getOrderBy(sortField, sortOrder),
         skip: (page - 1) * pageSize,
         take: pageSize,
       });
+      
+      return {
+        items: clients,
+        total,
+        page,
+        pageSize,
+      }
     }
 
     async createClient(data: Prisma.ClientCreateInput): Promise<Client> {
@@ -62,14 +76,35 @@ export class ClientService {
         });
     }
 
-    async getAllClients(userId): Promise<Client[]> {
-        return this.prisma.client.findMany(
-            {
-                where: {
-                    userId
-                }
-            }
-        );
+    async getAllClients(
+      userId: number,
+      page: number = 1,
+      pageSize: number = 10,
+      sortField?: string,
+      sortOrder: 'asc' | 'desc' = 'asc'
+    ): Promise<{ items: Client[], total: number, page: number, pageSize: number }> {
+        const whereClause = {
+            userId
+        };
+
+        // Get total count of matching records
+        const total = await this.prisma.client.count({
+            where: whereClause
+        });
+
+        const clients = await this.prisma.client.findMany({
+            where: whereClause,
+            orderBy: this.commonService.getOrderBy(sortField, sortOrder),
+            skip: (page - 1) * pageSize,
+            take: pageSize,
+        });
+
+        return {
+            items: clients,
+            total,
+            page,
+            pageSize,
+        };
     }
 
 

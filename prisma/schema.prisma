@@ -74,6 +74,7 @@ model Tag {
   id         Int       @id @default(autoincrement())
   name       String
   color      String    // Hex color for the tag
+  userId     Int
   timers     Timer[]   // A Tag can be associated with multiple Timers
 }
 
