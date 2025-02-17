@@ -77,7 +77,7 @@ export class TimerService {
         searchQuery?: string,
         sortField?: string,
         sortOrder: 'asc' | 'desc' = 'asc'
-    ): Promise<{ items: WeeklyGroupedTimers[]; totalCount: number, page: number, pageSize: number }> {
+    ): Promise<{ items: WeeklyGroupedTimers[]; total: number, page: number, pageSize: number }> {
         const [timers, total] = await this.prismaService.$transaction([
             this.prismaService.timer.findMany({
                 where: {
@@ -151,7 +151,7 @@ export class TimerService {
 
         return { 
             items:weeklyTimers,
-            totalCount: total,
+            total:total,
             page:page,
             pageSize:pageSize
         };
