@@ -6,6 +6,7 @@ import { Prisma, Timer } from '@prisma/client';
 import { successResponse, errorResponse } from 'src/response';
 import { JwtPayload } from 'jsonwebtoken';
 import { TimerCreateDto, WeeklyGroupedTimersResponse } from './dto/grouped-timer.dto';
+import { TimerReportRequestDto } from './dto/report-request.dto';
 
 @Controller('timer')
 export class TimerController {
@@ -156,5 +157,17 @@ export class TimerController {
         }
     }
 
-
+    @UseGuards(AuthGuard)
+    @Post('report')
+    async getTimerReport(
+        @Req() req: UserReq,
+        @Body() filters: TimerReportRequestDto
+    ) {
+        try {
+            const response = await this.timerService.getTimerReport(req.user.sub, filters);
+            return successResponse('Timer report generated successfully', response);
+        } catch (error) {
+            return errorResponse('Failed to generate timer report', error);
+        }
+    }
 }
