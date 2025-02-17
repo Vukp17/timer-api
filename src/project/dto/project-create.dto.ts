@@ -4,6 +4,9 @@ export interface ProjectCreateDto {
     description?: string;
     userId: number;
     clientId?: number;
+    hourlyRate?: number;
+    currency?: string;
+    color?: string;
 
 
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { CommonService } from 'src/common/common.service';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -197,4 +197,25 @@ export class TimerService {
         })
         return data;
     }
+
+    async duplicateTimer(timerId: number) {
+        const timer = await this.prismaService.timer.findUnique({
+            where: {
+                id: timerId
+            }
+        })
+        if (!timer) {
+            throw new NotFoundException('Timer not found');
+        }
+        const { id, ...timerData } = timer;
+        const newTimer = await this.prismaService.timer.create({
+            data: timerData,
+            include: {
+                project: true,
+                tag: true
+            }
+        })
+        return newTimer;
+    }
+
 }

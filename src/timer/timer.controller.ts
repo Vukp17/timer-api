@@ -1,5 +1,5 @@
 // filepath: /c:/Dev/timer-api/src/timer/timer.controller.ts
-import { Body, Controller, Get, Post, Put, Query, Req, UseGuards, DefaultValuePipe, ParseIntPipe } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query, Req, UseGuards, DefaultValuePipe, ParseIntPipe, Param, Delete } from '@nestjs/common';
 import { TimerService, WeeklyGroupedTimers } from './timer.service';
 import { AuthGuard, UserReq } from 'src/auth/auth.guard';
 import { Prisma, Timer } from '@prisma/client';
@@ -135,6 +135,25 @@ export class TimerController {
             sortOrder
         );
         return successResponse('Timers fetched successfully', response);
+    }
+
+    @UseGuards(AuthGuard)
+    @Post('duplicate/:id')
+    async duplicateTimer(@Req() req: UserReq, @Param('id') id: string) {
+        const response = await this.timerService.duplicateTimer(Number(id));
+        return successResponse('Timer duplicated successfully', response);
+    }
+
+    @UseGuards(AuthGuard)
+    @Delete(':id')
+    async deleteTimer(@Req() req: UserReq, @Param('id') id: string) {
+        try {
+            const response = await this.timerService.delete(Number(id));
+            return successResponse('Timer deleted successfully', response);
+        } catch (error) {
+            console.log(error);
+            return errorResponse('Failed to delete timer', error);
+        }
     }
 
 

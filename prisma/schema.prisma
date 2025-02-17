@@ -35,7 +35,9 @@ model Project {
   clientId    Int?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-
+  hourlyRate  Float @default(0)
+  currency    String @default("EUR")
+  color       String @default("#000000")
   user        User      @relation(fields: [userId], references: [id])
   client      Client?   @relation(fields: [clientId], references: [id])
   timers      Timer[]
@@ -52,7 +54,7 @@ model Timer {
   userId      Int
   projectId   Int?
   tagId       Int?
-
+  hourlyRate  Float @default(0)
   user        User      @relation(fields: [userId], references: [id])
   project     Project?  @relation(fields: [projectId], references: [id])
   tag         Tag?      @relation(fields: [tagId], references: [id])
