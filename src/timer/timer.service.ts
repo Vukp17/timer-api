@@ -333,23 +333,29 @@ export class TimerService {
         };
     }
 
-    async getTimersForReport(startDate?: string, endDate?: string) {
-        const where = {};
-
-        if (startDate || endDate) {
-            where['createdAt'] = {};
-            if (startDate) {
-                where['createdAt']['gte'] = new Date(startDate);
-            }
-            if (endDate) {
-                where['createdAt']['lte'] = new Date(endDate);
-            }
-        }
+    async getTimersForReport(startDate?: string, endDate?: string, projectIds?: number[], tagIds?: number[], clientIds?: number[], userId?: number)  {
+        const where: Prisma.TimerWhereInput = {
+            ...(startDate || endDate ? {
+                createdAt: {
+                    ...(startDate && { gte: new Date(startDate) }),
+                    ...(endDate && { lte: new Date(endDate) })
+                }
+            } : {}),
+            ...(projectIds?.length && { projectId: { in: projectIds } }),
+            ...(tagIds?.length && { tagId: { in: tagIds } }),
+            ...(clientIds?.length && { project: { clientId: { in: clientIds } } }),
+            ...(userId && { userId: userId })
+        };
 
         const timers = await this.prismaService.timer.findMany({
             where,
             include: {
-                project: true,
+                project: {
+                    include: {
+                        client: true
+                    }
+                },
+                tag: true,
                 user: {
                     select: {
                         id: true,
@@ -359,8 +365,7 @@ export class TimerService {
             }
         });
 
-        // Calculate total hours
-        const totalHours = timers.reduce((sum, timer) => sum + timer.duration, 0) / 3600; // Convert seconds to hours
+        const totalHours = timers.reduce((sum, timer) => sum + timer.duration, 0) / 3600;
 
         return {
             timers,

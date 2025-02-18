@@ -1,4 +1,4 @@
-import { IsDateString, IsOptional } from 'class-validator';
+import { IsArray, IsDateString, IsOptional } from 'class-validator';
 
 export class ReportRequestDto {
   @IsDateString()
@@ -8,6 +8,18 @@ export class ReportRequestDto {
   @IsDateString()
   @IsOptional()
   endDate?: string;
+
+  @IsArray()
+  @IsOptional()
+  projectIds?: number[];
+
+  @IsArray()
+  @IsOptional()
+  tagIds?: number[];
+
+  @IsArray()
+  @IsOptional()
+  clientIds?: number[];
 }
 
 export class TimerReportRequestDto {
