@@ -6,8 +6,12 @@ sleep 10
 
 # Run migrations
 echo "Running database migrations..."
-npx prisma migrate deploy
+npx prisma migrate deploy --schema=./prisma/schema.prisma
+
+# Generate Prisma Client (just to be sure)
+echo "Generating Prisma Client..."
+npx prisma generate
 
 # Start the application
 echo "Starting the application..."
-npm run start:prod 
+NODE_ENV=production node dist/main.js 
