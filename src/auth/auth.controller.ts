@@ -60,8 +60,7 @@ export class AuthController {
     res.clearCookie('refresh_token');
     return { message: 'Logged out successfully' };
   }
-
-  @UseGuards(AuthGuard)
+  
   @Get('verify')
   async verify(@Req() req: UserReq) {
     return req.user;
