@@ -253,6 +253,17 @@ export class TimerService {
         const clientMap = new Map<number, { hours: number, name: string }>();
         const dayMap = new Map<string, { hours: number, earnings: number }>();
 
+        // Create a map of all days in the date range with zero values
+        if (filters.fromDate && filters.toDate) {
+            const start = new Date(filters.fromDate);
+            const end = new Date(filters.toDate);
+            
+            for (let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
+                const dayKey = date.toISOString().split('T')[0];
+                dayMap.set(dayKey, { hours: 0, earnings: 0 });
+            }
+        }
+
         timers.forEach(timer => {
             if (timer.endTime) {
                 const hours = (new Date(timer.endTime).getTime() - new Date(timer.startTime).getTime()) / (1000 * 60 * 60);
@@ -283,7 +294,7 @@ export class TimerService {
                     clientMap.set(timer.project.clientId, current);
                 }
 
-                // Update day aggregation to include earnings
+                // Update day aggregation
                 const day = new Date(timer.startTime).toISOString().split('T')[0];
                 const currentDay = dayMap.get(day) || { hours: 0, earnings: 0 };
                 currentDay.hours += hours;

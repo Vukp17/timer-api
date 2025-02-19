@@ -44,4 +44,22 @@ export class UserService {
             data,
         });
     }
+
+
+    async delete(id: number) {
+        return this.prisma.user.delete({
+            where: { id },
+        });
+    }
+
+    async getUserDetailsById(id: number) {
+        return this.prisma.user.findUnique({
+            where: { id },
+            select: {
+                id: true,
+                username: true,
+                email: true,
+            },
+        });
+    }
 }

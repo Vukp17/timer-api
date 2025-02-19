@@ -1,10 +1,11 @@
-import { Controller, Get, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { ReportService } from './report.service';
 import { TimerService } from './timer.service';
 import { Response } from 'express';
 import * as fs from 'fs';
 import { ReportRequestDto } from './dto/report-request.dto';
 import { AuthGuard, UserReq } from 'src/auth/auth.guard';
+import { CreateSavedReportFilterDto } from './dto/saved-report-filter.dto';
 
 @Controller('reports')
 export class ReportController {
@@ -35,5 +36,29 @@ export class ReportController {
     });
     
     fileStream.pipe(res);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('filters')
+  async saveReportFilter(
+    @Body() dto: CreateSavedReportFilterDto,
+    @Req() req: UserReq,
+  ) {
+    return this.reportService.createSavedFilter(req.user.sub, dto);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('filters')
+  async getSavedFilters(@Req() req: UserReq) {
+    return this.reportService.getSavedFilters(req.user.sub);
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete('filters/:id')
+  async deleteSavedFilter(
+    @Param('id') id: string,
+    @Req() req: UserReq,
+  ) {
+    return this.reportService.deleteSavedFilter(req.user.sub, +id);
   }
 } 

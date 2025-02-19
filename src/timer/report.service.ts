@@ -1,11 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { createObjectCsvWriter } from 'csv-writer';
 import {  Prisma } from '@prisma/client';
 import * as path from 'path';
 import * as fs from 'fs';
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateSavedReportFilterDto, SavedReportFilterResponseDto } from './dto/saved-report-filter.dto';
 
 @Injectable()
 export class ReportService {
+  constructor(private prisma: PrismaService) {}
+
   async generateCsvReport(data: { timers: any[], totalHours: number }): Promise<string> {
     const reportsDir = path.resolve('reports');
     await fs.promises.mkdir(reportsDir, { recursive: true });
@@ -51,5 +55,38 @@ export class ReportService {
 
     await csvWriter.writeRecords(records);
     return filePath;
+  }
+
+  async createSavedFilter(
+    userId: number,
+    dto: CreateSavedReportFilterDto,
+  ): Promise<SavedReportFilterResponseDto> {
+    return this.prisma.savedReportFilter.create({
+      data: {
+        ...dto,
+        userId,
+      },
+    });
+  }
+
+  async getSavedFilters(userId: number): Promise<SavedReportFilterResponseDto[]> {
+    return this.prisma.savedReportFilter.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async deleteSavedFilter(userId: number, filterId: number): Promise<void> {
+    const filter = await this.prisma.savedReportFilter.findFirst({
+      where: { id: filterId, userId },
+    });
+
+    if (!filter) {
+      throw new NotFoundException('Saved filter not found');
+    }
+
+    await this.prisma.savedReportFilter.delete({
+      where: { id: filterId },
+    });
   }
 } 

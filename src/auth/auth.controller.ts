@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Post,
+  Put,
   Req,
   Res,
   UseGuards
@@ -13,10 +15,12 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard, UserReq } from './auth.guard';
 import { RefreshTokenGuard } from './refresh-token.guard';
-
+import { UserService } from 'src/user/user.service';
+import { errorResponse, successResponse } from 'src/response';
+import { Prisma } from '@prisma/client';
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private userService: UserService) { }
 
   @Post('register')
   async register(@Body() dto: RegisterDto) {
@@ -60,11 +64,7 @@ export class AuthController {
     res.clearCookie('refresh_token');
     return { message: 'Logged out successfully' };
   }
-  
-  @Get('verify')
-  async verify(@Req() req: UserReq) {
-    return req.user;
-  }
+
 
   @UseGuards(RefreshTokenGuard)
   @Post('refresh')
