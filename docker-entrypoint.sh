@@ -14,4 +14,4 @@ npx prisma generate
 
 # Start the application
 echo "Starting the application..."
-NODE_ENV=production node dist/main.js 
+node dist/src/main.js 

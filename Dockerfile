@@ -5,16 +5,16 @@ WORKDIR /app
 # Install dependencies needed for node-gyp, Prisma, and OpenSSL
 RUN apk add --no-cache python3 make g++ openssl openssl-dev
 
+# Copy package files and install dependencies
 COPY package*.json ./
 COPY prisma ./prisma/
 COPY tsconfig*.json ./
-
-# Install dependencies
 RUN npm install
 
 # Generate Prisma Client
 RUN npx prisma generate
 
+# Copy source code and build
 COPY . .
 RUN npm run build
 
