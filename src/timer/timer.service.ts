@@ -86,6 +86,9 @@ export class TimerService {
                     description: {
                         contains: searchQuery,
                     },
+                    endTime: {
+                        not: null
+                    }
                 },
                 orderBy: this.commonService.getOrderBy(sortField, sortOrder),
                 take: pageSize,
