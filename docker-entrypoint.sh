@@ -14,4 +14,4 @@ npx prisma generate
 
 # Start the application
 echo "Starting the application..."
-node dist/src/main.js 
+npm run start:dev
