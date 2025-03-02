@@ -31,13 +31,15 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/tsconfig*.json ./
+COPY --from=build /app/scripts ./scripts
 
 # Generate Prisma Client in production
 RUN npx prisma generate
 
 EXPOSE 4000
 
-# Add a startup script
+# Add startup scripts
 COPY docker-entrypoint.sh /
-RUN chmod +x /docker-entrypoint.sh
+COPY import-entrypoint.sh /
+RUN chmod +x /docker-entrypoint.sh /import-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
