@@ -14,4 +14,4 @@ npx prisma generate
 
 # Start the application
 echo "Starting the application..."
-npm run start:dev
+npm run start:prod

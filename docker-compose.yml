@@ -28,35 +28,6 @@ services:
     depends_on:
       - postgres
 
-  api:
-    build: .
-    container_name: timer_api
-    environment:
-      DATABASE_URL: postgresql://root:root@postgres:5432/timer
-      NODE_ENV: production
-    networks:
-      - my_network
-    ports:
-      - "4000:4000"
-    depends_on:
-      - postgres
-
-  import:
-    build: .
-    container_name: timer_import
-    environment:
-      DATABASE_URL: postgresql://root:root@postgres:5432/timer
-      NODE_ENV: production
-    volumes:
-      - ./backup.json:/app/backup.json
-    networks:
-      - my_network
-    depends_on:
-      - postgres
-    entrypoint: ["/import-entrypoint.sh"]
-    profiles:
-      - import
-
 networks:
   my_network:
     driver: bridge
