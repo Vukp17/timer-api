@@ -41,5 +41,5 @@ EXPOSE 4000
 # Add startup scripts
 COPY docker-entrypoint.sh /
 COPY import-entrypoint.sh /
-RUN chmod +x /docker-entrypoint.sh /import-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
