@@ -3,7 +3,7 @@ import { ReportService } from './report.service';
 import { TimerService } from './timer.service';
 import { Response } from 'express';
 import * as fs from 'fs';
-import { ReportRequestDto } from './dto/report-request.dto';
+  import { ReportExportRequestDto, ReportRequestDto } from './dto/report-request.dto';
 import { AuthGuard, UserReq } from 'src/auth/auth.guard';
 import { CreateSavedReportFilterDto } from './dto/saved-report-filter.dto';
 
@@ -21,8 +21,8 @@ export class ReportController {
     @Res() res: Response,
     @Req() req: UserReq,
   ) {
-    const { startDate, endDate, projectIds, tagIds, clientIds } = query;
-    const data = await this.timerService.getTimersForReport(startDate, endDate, projectIds, tagIds, clientIds, req.user.sub);
+    const { fromDate, toDate, projectIds, tagIds, clientIds } = query;
+    const data = await this.timerService.getTimersForReport(fromDate, toDate, projectIds, tagIds, clientIds, req.user.sub);
     const filePath = await this.reportService.generateCsvReport(data);
 
     res.setHeader('Content-Type', 'text/csv');
