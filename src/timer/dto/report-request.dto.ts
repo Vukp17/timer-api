@@ -21,6 +21,29 @@ export class ReportRequestDto {
   @IsOptional()
   clientIds?: number[];
 }
+export class ReportExportRequestDto {
+    @IsDateString()
+    @IsOptional()
+    fromDate?: string;
+
+    @IsDateString()
+    @IsOptional()
+    toDate?: string;
+
+    @IsArray()
+    @IsOptional()
+    projectIds?: number[];
+  
+    @IsArray()
+    @IsOptional()
+    tagIds?: number[];
+  
+    @IsArray()
+    @IsOptional()
+    clientIds?: number[];
+  
+  
+}
 
 export class TimerReportRequestDto {
     fromDate?: string;

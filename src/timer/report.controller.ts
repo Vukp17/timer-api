@@ -17,7 +17,7 @@ export class ReportController {
   @UseGuards(AuthGuard)
   @Get('csv')
   async generateCsvReport(
-    @Query() query: ReportRequestDto,
+    @Query() query: ReportExportRequestDto,
     @Res() res: Response,
     @Req() req: UserReq,
   ) {
