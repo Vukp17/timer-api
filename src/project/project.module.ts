@@ -6,10 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CommonService } from 'src/common/common.service';
 @Module({
   controllers: [ProjectController],
-  providers: [ProjectService, PrismaService,JwtService,CommonService],
+  providers: [ProjectService, PrismaService, JwtService, CommonService],
   imports: [],
-  
 })
-export class ProjectModule 
-
-{}
+export class ProjectModule {}

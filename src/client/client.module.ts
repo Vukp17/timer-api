@@ -7,6 +7,6 @@ import { CommonService } from 'src/common/common.service';
 
 @Module({
   controllers: [ClientController],
-  providers: [ClientService,PrismaService,JwtService,CommonService]
+  providers: [ClientService, PrismaService, JwtService, CommonService],
 })
 export class ClientModule {}

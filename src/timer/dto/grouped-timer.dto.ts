@@ -1,5 +1,5 @@
 // filepath: /c:/Dev/timer-api/src/timer/dto/grouped-timer.dto.ts
-import { Timer, Project, Tag } from "@prisma/client";
+import { Timer, Project, Tag } from '@prisma/client';
 
 export interface ExtendedTimer extends Timer {
   project: Project;
@@ -23,13 +23,11 @@ export interface WeeklyGroupedTimersResponse {
   totalCount: number;
 }
 
-
 export interface TimerCreateDto {
-  startTime: Date | string
-  endTime?: Date | string | null
-  duration?: number | null
-  description?: string | null
-  projectId?: number | null
-  tagId?: number | null
-
+  startTime: Date | string;
+  endTime?: Date | string | null;
+  duration?: number | null;
+  description?: string | null;
+  projectId?: number | null;
+  tagId?: number | null;
 }

@@ -4,30 +4,38 @@ import { Client, Prisma } from '@prisma/client';
 import { CommonService } from '../common/common.service';
 @Injectable()
 export class ClientService {
-  constructor(private prisma: PrismaService, private commonService: CommonService) { }
+  constructor(
+    private prisma: PrismaService,
+    private commonService: CommonService,
+  ) {}
   async getClientsForUser(
     page: number,
     pageSize: number,
     userId: number,
     searchQuery?: string,
     sortField?: string,
-    sortOrder: 'asc' | 'desc' = 'asc'
-  ): Promise<{ items: Client[], total: number, page: number, pageSize: number }> {
+    sortOrder: 'asc' | 'desc' = 'asc',
+  ): Promise<{
+    items: Client[];
+    total: number;
+    page: number;
+    pageSize: number;
+  }> {
     const searchConditions = searchQuery
       ? {
-        OR: [
-          {
-            name: {
-              contains: searchQuery,
+          OR: [
+            {
+              name: {
+                contains: searchQuery,
+              },
             },
-          },
-          {
-            email: {
-              contains: searchQuery,
+            {
+              email: {
+                contains: searchQuery,
+              },
             },
-          },
-        ],
-      }
+          ],
+        }
       : {};
 
     const whereClause = {
@@ -52,7 +60,7 @@ export class ClientService {
       total,
       page,
       pageSize,
-    }
+    };
   }
 
   async createClient(data: Prisma.ClientCreateInput): Promise<Client> {
@@ -67,7 +75,10 @@ export class ClientService {
       },
     });
   }
-  async updateClient(id: number, data: Prisma.ClientUpdateInput): Promise<Client> {
+  async updateClient(
+    id: number,
+    data: Prisma.ClientUpdateInput,
+  ): Promise<Client> {
     return this.prisma.client.update({
       where: {
         id,
@@ -77,14 +88,10 @@ export class ClientService {
   }
 
   async getAllClients(userId): Promise<Client[]> {
-    return this.prisma.client.findMany(
-      {
-        where: {
-          userId
-        }
-      }
-    );
-
+    return this.prisma.client.findMany({
+      where: {
+        userId,
+      },
+    });
   }
-
-  }
+}

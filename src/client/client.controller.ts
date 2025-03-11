@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Put,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard, UserReq } from 'src/auth/auth.guard';
 import { ClientService } from './client.service';
 import { ClientCreateDto } from './dto/client-create.dto';
@@ -17,7 +27,7 @@ export class ClientController {
     @Query('sortField') sortField?: string,
     @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'asc',
     @Query('page') page?: string,
-    @Query('pageSize') pageSize?: string
+    @Query('pageSize') pageSize?: string,
   ) {
     try {
       const response = await this.clientService.getClientsForUser(
@@ -26,7 +36,7 @@ export class ClientController {
         req.user.sub,
         searchQuery,
         sortField,
-        sortOrder
+        sortOrder,
       );
       return successResponse('Clients fetched successfully', response);
     } catch (error) {
@@ -62,7 +72,10 @@ export class ClientController {
           connect: { id: req.user.sub },
         },
       };
-      const response = await this.clientService.updateClient(Number(req.params.id), result);
+      const response = await this.clientService.updateClient(
+        Number(req.params.id),
+        result,
+      );
       return successResponse('Client updated successfully', response);
     } catch (error) {
       return errorResponse('Failed to update client', error);

@@ -6,11 +6,14 @@ import { PrismaService } from '../prisma/prisma.service';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async validatePassword(password: string, hashedPassword: string): Promise<boolean> {
+  async validatePassword(
+    password: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
     return bcrypt.compare(password, hashedPassword);
   }
 
-  async create(username: string,email:string ,password: string) {
+  async create(username: string, email: string, password: string) {
     const hashedPassword = await bcrypt.hash(password, 10);
     return this.prisma.user.create({
       data: {
@@ -35,31 +38,30 @@ export class UserService {
       },
     });
   }
-    async findAll() {
-        return this.prisma.user.findMany();
-    }
-    async update(id: number, data: any) {
-        return this.prisma.user.update({
-            where: { id },
-            data,
-        });
-    }
+  async findAll() {
+    return this.prisma.user.findMany();
+  }
+  async update(id: number, data: any) {
+    return this.prisma.user.update({
+      where: { id },
+      data,
+    });
+  }
 
+  async delete(id: number) {
+    return this.prisma.user.delete({
+      where: { id },
+    });
+  }
 
-    async delete(id: number) {
-        return this.prisma.user.delete({
-            where: { id },
-        });
-    }
-
-    async getUserDetailsById(id: number) {
-        return this.prisma.user.findUnique({
-            where: { id },
-            select: {
-                id: true,
-                username: true,
-                email: true,
-            },
-        });
-    }
+  async getUserDetailsById(id: number) {
+    return this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+      },
+    });
+  }
 }

@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CommonService } from 'src/common/common.service';
 @Module({
   controllers: [TagController],
-  providers: [TagService,PrismaService,JwtService,CommonService],
+  providers: [TagService, PrismaService, JwtService, CommonService],
   exports: [TagService],
 })
-export class TagModule {} 
+export class TagModule {}

@@ -9,7 +9,14 @@ import { ReportService } from './report.service';
 import { ReportController } from './report.controller';
 
 @Module({
-  providers: [TimerService,ProjectService, PrismaService,JwtService,CommonService, ReportService],
-  controllers: [TimerController, ReportController]
+  providers: [
+    TimerService,
+    ProjectService,
+    PrismaService,
+    JwtService,
+    CommonService,
+    ReportService,
+  ],
+  controllers: [TimerController, ReportController],
 })
 export class TimerModule {}

@@ -5,18 +5,24 @@ import { CommonService } from 'src/common/common.service';
 
 @Injectable()
 export class TagService {
-  constructor(private prisma: PrismaService,private commonService:CommonService
-    
+  constructor(
+    private prisma: PrismaService,
+    private commonService: CommonService,
   ) {}
 
-  async getTags(page: number, pageSize: number, userId: number, searchQuery?: string, sortField?: string, sortOrder: 'asc' | 'desc' = 'asc'): Promise<{ items: Tag[], total: number, page: number, pageSize: number }> {
+  async getTags(
+    page: number,
+    pageSize: number,
+    userId: number,
+    searchQuery?: string,
+    sortField?: string,
+    sortOrder: 'asc' | 'desc' = 'asc',
+  ): Promise<{ items: Tag[]; total: number; page: number; pageSize: number }> {
     console.log(page, pageSize, userId, searchQuery, sortField, sortOrder);
     const searchConditions = searchQuery
       ? {
-        OR: [
-          { name: { contains: searchQuery } },
-        ],
-      }
+          OR: [{ name: { contains: searchQuery } }],
+        }
       : {};
 
     const whereClause = {
@@ -34,17 +40,14 @@ export class TagService {
       skip: (page - 1) * pageSize,
       take: pageSize,
     });
-    
+
     return {
       items: tags,
       total,
       page,
       pageSize,
-    }
+    };
   }
-
-
-
 
   async getTagById(id: number): Promise<Tag | null> {
     return this.prisma.tag.findUnique({
@@ -58,7 +61,10 @@ export class TagService {
     });
   }
 
-  async updateTag(id: number, data: { name?: string; color?: string }): Promise<Tag> {
+  async updateTag(
+    id: number,
+    data: { name?: string; color?: string },
+  ): Promise<Tag> {
     return this.prisma.tag.update({
       where: { id },
       data,
@@ -70,4 +76,4 @@ export class TagService {
       where: { id },
     });
   }
-} 
+}

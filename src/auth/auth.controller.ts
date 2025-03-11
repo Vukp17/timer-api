@@ -7,7 +7,7 @@ import {
   Put,
   Req,
   Res,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
@@ -20,7 +20,10 @@ import { errorResponse, successResponse } from 'src/response';
 import { Prisma } from '@prisma/client';
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService, private userService: UserService) { }
+  constructor(
+    private authService: AuthService,
+    private userService: UserService,
+  ) {}
 
   @Post('register')
   async register(@Body() dto: RegisterDto) {
@@ -33,7 +36,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const tokens = await this.authService.login(dto);
-    
+
     // Set refresh token in http-only cookie
     res.cookie('refresh_token', tokens.refresh_token, {
       httpOnly: true,
@@ -56,15 +59,11 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Post('logout')
-  async logout(
-    @Req() req: UserReq,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async logout(@Req() req: UserReq, @Res({ passthrough: true }) res: Response) {
     await this.authService.logout(req.user.sub);
     res.clearCookie('refresh_token');
     return { message: 'Logged out successfully' };
   }
-
 
   @UseGuards(RefreshTokenGuard)
   @Post('refresh')
@@ -74,9 +73,9 @@ export class AuthController {
   ) {
     const userId = req.user.sub;
     const refreshToken = req.cookies.refresh_token;
-    
+
     const tokens = await this.authService.refreshTokens(userId, refreshToken);
-    
+
     res.cookie('refresh_token', tokens.refresh_token, {
       httpOnly: true,
       secure: true,

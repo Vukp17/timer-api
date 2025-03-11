@@ -36,4 +36,4 @@ export class SavedReportFilterResponseDto {
   clientIds: number[];
   createdAt: Date;
   updatedAt: Date;
-} 
+}

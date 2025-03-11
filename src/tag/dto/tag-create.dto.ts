@@ -6,4 +6,4 @@ export class TagCreateDto {
 
   @IsHexColor()
   color: string;
-} 
+}

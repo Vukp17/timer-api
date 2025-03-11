@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { TagService } from './tag.service';
 import { AuthGuard, UserReq } from 'src/auth/auth.guard';
 import { successResponse, errorResponse } from 'src/response';
@@ -15,11 +26,17 @@ export class TagController {
     @Query('pageSize') pageSize?: string,
     @Query('search') searchQuery?: string,
     @Query('sortField') sortField?: string,
-    @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'asc'
-
+    @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'asc',
   ) {
     try {
-      const tags = await this.tagService.getTags(Number(page), Number(pageSize),req.user.sub, searchQuery, sortField, sortOrder);
+      const tags = await this.tagService.getTags(
+        Number(page),
+        Number(pageSize),
+        req.user.sub,
+        searchQuery,
+        sortField,
+        sortOrder,
+      );
       return successResponse('Tags fetched successfully', tags);
     } catch (error) {
       return errorResponse('Failed to fetch tags', error);
@@ -39,9 +56,15 @@ export class TagController {
 
   @UseGuards(AuthGuard)
   @Post()
-  async createTag(@Body() data: { name: string; color: string },@Req() req: UserReq) {
+  async createTag(
+    @Body() data: { name: string; color: string },
+    @Req() req: UserReq,
+  ) {
     try {
-      const tag = await this.tagService.createTag({...data,userId:req.user.sub});
+      const tag = await this.tagService.createTag({
+        ...data,
+        userId: req.user.sub,
+      });
       return successResponse('Tag created successfully', tag);
     } catch (error) {
       return errorResponse('Failed to create tag', error);
@@ -52,7 +75,7 @@ export class TagController {
   @Put(':id')
   async updateTag(
     @Param('id') id: string,
-    @Body() data: { name?: string; color?: string }
+    @Body() data: { name?: string; color?: string },
   ) {
     try {
       const tag = await this.tagService.updateTag(Number(id), data);
@@ -72,4 +95,4 @@ export class TagController {
       return errorResponse('Failed to delete tag', error);
     }
   }
-} 
+}

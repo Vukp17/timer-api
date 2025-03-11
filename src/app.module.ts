@@ -12,7 +12,9 @@ import { TimerModule } from './timer/timer.module';
 import { TagModule } from './tag/tag.module';
 
 @Module({
-  imports: [UserModule, AuthModule,
+  imports: [
+    UserModule,
+    AuthModule,
     ConfigModule.forRoot({
       envFilePath: `.env.${process.env.NODE_ENV || 'development'}`, // Load .env files based on NODE_ENV
       isGlobal: true, // Make config globally available
@@ -20,10 +22,10 @@ import { TagModule } from './tag/tag.module';
     ProjectModule,
     ClientModule,
     TimerModule,
-    TagModule],
-  controllers: [AppController],
-  providers: [AppService, PrismaService, CommonService,
+    TagModule,
   ],
+  controllers: [AppController],
+  providers: [AppService, PrismaService, CommonService],
   exports: [PrismaService],
 })
-export class AppModule { }
+export class AppModule {}
