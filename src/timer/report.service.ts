@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { createObjectCsvWriter } from 'csv-writer';
-import { Prisma, Timer } from '@prisma/client';
+import { Timer } from '@prisma/client';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as ExcelJS from 'exceljs';
