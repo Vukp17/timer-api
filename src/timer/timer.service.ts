@@ -407,7 +407,6 @@ export class TimerService {
   ): Promise<{ timers: Timer[]; totalHours: number }> {
     // Create start date at beginning of day
     const start = startDate ? new Date(startDate) : undefined;
-    
     // Create end date at end of day
     let end: Date | undefined;
     if (endDate) {

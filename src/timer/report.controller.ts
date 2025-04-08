@@ -29,9 +29,9 @@ export class ReportController {
   ) {}
 
   @UseGuards(AuthGuard)
-  @Get('csv')
+  @Post('csv')
   async generateCsvReport(
-    @Query() query: ReportExportRequestDto,
+    @Body() query: ReportExportRequestDto,
     @Res() res: Response,
     @Req() req: UserReq,
   ) {
@@ -63,9 +63,9 @@ export class ReportController {
   }
 
   @UseGuards(AuthGuard)
-  @Get('excel')
+  @Post('excel')
   async generateExcelReport(
-    @Query() query: ReportExportRequestDto,
+    @Body() query: ReportExportRequestDto,
     @Res() res: Response,
     @Req() req: UserReq,
   ) {
