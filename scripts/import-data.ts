@@ -73,11 +73,9 @@ async function importData() {
 
     // Process each user from Firestore
     for (const [userId, userData] of Object.entries(backupData.__collections__.users)) {
-      console.log(`Processing user: ${userId}`);
       
       // Create a new user for each Firestore user
       if(!userId || !userData) continue;
-      console.log(`Creating user: ${userId}`);
       const user = await prisma.user.create({
         data: {
           email: `${userId}@import.temp`,  // Temporary email that you can update later
@@ -187,10 +185,8 @@ async function importData() {
         }
       }
 
-      console.log(`Completed importing data for user: ${userId}`);
     }
 
-    console.log('Data import completed successfully!');
   } catch (error) {
     console.error('Error importing data:', error);
   } finally {

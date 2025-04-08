@@ -237,11 +237,21 @@ export class TimerService {
     userId: number,
     filters: TimerReportRequestDto,
   ): Promise<TimerReportResponse> {
+    // Create start date at beginning of day
+    const startDate = filters.fromDate ? new Date(filters.fromDate) : undefined;
+    
+    // Create end date at end of day
+    let endDate: Date | undefined;
+    if (filters.toDate) {
+      endDate = new Date(filters.toDate);
+      endDate.setHours(23, 59, 59, 999);
+    }
+    
     const whereClause: Prisma.TimerWhereInput = {
       userId: userId,
       startTime: {
-        gte: filters.fromDate ? new Date(filters.fromDate) : undefined,
-        lte: filters.toDate ? new Date(filters.toDate) : undefined,
+        gte: startDate,
+        lte: endDate,
       },
       projectId:
         filters.projectIds?.length > 0 ? { in: filters.projectIds } : undefined,
@@ -265,6 +275,7 @@ export class TimerService {
         tag: true,
       },
     });
+
 
     // Calculate total hours and earnings
     let totalHours = 0;
@@ -394,11 +405,21 @@ export class TimerService {
     clientIds?: number[],
     userId?: number,
   ): Promise<{ timers: Timer[]; totalHours: number }> {
+    // Create start date at beginning of day
+    const start = startDate ? new Date(startDate) : undefined;
+    
+    // Create end date at end of day
+    let end: Date | undefined;
+    if (endDate) {
+      end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+    }
+    
     const where: Prisma.TimerWhereInput = {
-      ...(startDate && endDate && {
+      ...(start && end && {
         startTime: {
-          gte: startDate ? new Date(startDate) : undefined,
-          lte: endDate ? new Date(endDate) : undefined,
+          gte: start,
+          lte: end, 
         },
       }),
       ...(projectIds?.length && { projectId: { in: projectIds } }),
@@ -424,7 +445,7 @@ export class TimerService {
         },
       },
     });
-
+    // Calculate total hours
     const totalHours =
       timers.reduce((sum, timer) => sum + timer.duration, 0) / 3600;
 

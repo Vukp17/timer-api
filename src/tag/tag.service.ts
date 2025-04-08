@@ -18,7 +18,6 @@ export class TagService {
     sortField?: string,
     sortOrder: 'asc' | 'desc' = 'asc',
   ): Promise<{ items: Tag[]; total: number; page: number; pageSize: number }> {
-    console.log(page, pageSize, userId, searchQuery, sortField, sortOrder);
     const searchConditions = searchQuery
       ? {
           OR: [{ name: { contains: searchQuery } }],
