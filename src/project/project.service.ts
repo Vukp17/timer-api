@@ -6,6 +6,7 @@ import { ProjectDocumentDto } from './dto/project-document.dto';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Express } from 'express';
+import multer from "multer";
 
 @Injectable()
 export class ProjectService {

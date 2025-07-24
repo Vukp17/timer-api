@@ -23,7 +23,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from '../common/file-upload.config';
 import { Response } from 'express';
 import { Express } from 'express';
-
+import multer from "multer";
 
 
 @Controller('project')
