@@ -5,6 +5,8 @@ import { CommonService } from 'src/common/common.service';
 import { ProjectDocumentDto } from './dto/project-document.dto';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Express } from 'express';
+
 @Injectable()
 export class ProjectService {
   constructor(

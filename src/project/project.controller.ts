@@ -22,6 +22,9 @@ import { errorResponse, successResponse } from 'src/response';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from '../common/file-upload.config';
 import { Response } from 'express';
+import { Express } from 'express';
+
+
 
 @Controller('project')
 export class ProjectController {
