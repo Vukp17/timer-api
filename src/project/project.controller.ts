@@ -9,12 +9,19 @@ import {
   Query,
   Req,
   UseGuards,
+  Param,
+  UploadedFile,
+  UseInterceptors,
+  Res,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { AuthGuard, UserReq } from 'src/auth/auth.guard';
 import { ProjectCreateDto } from './dto/project-create.dto';
 import { Project } from '@prisma/client';
 import { errorResponse, successResponse } from 'src/response';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { multerConfig } from '../common/file-upload.config';
+import { Response } from 'express';
 
 @Controller('project')
 export class ProjectController {
@@ -110,6 +117,90 @@ export class ProjectController {
       return successResponse('All projects fetched successfully', response);
     } catch (error) {
       return errorResponse('Failed to fetch all projects', error);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Get(':id')
+  async getProjectById(@Req() req: UserReq, @Param('id') id: string) {
+    try {
+      const response = await this.projectService.getProjectById(Number(id), req.user.sub);
+      if (!response) {
+        return errorResponse('Project not found', null);
+      }
+      return successResponse('Project fetched successfully', response);
+    } catch (error) {
+      return errorResponse('Failed to fetch project', error);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Post(':id/documents')
+  @UseInterceptors(FileInterceptor('file', multerConfig))
+  async uploadDocument(
+    @Req() req: UserReq,
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    try {
+      if (!file) {
+        return errorResponse('No file uploaded', null);
+      }
+
+      const response = await this.projectService.uploadDocument(
+        file,
+        Number(id),
+        req.user.sub,
+      );
+      return successResponse('Document uploaded successfully', response);
+    } catch (error) {
+      return errorResponse('Failed to upload document', error);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Get(':id/documents')
+  async getProjectDocuments(@Req() req: UserReq, @Param('id') id: string) {
+    try {
+      const response = await this.projectService.getProjectDocuments(Number(id));
+      return successResponse('Documents fetched successfully', response);
+    } catch (error) {
+      return errorResponse('Failed to fetch documents', error);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete('documents/:documentId')
+  async deleteDocument(@Req() req: UserReq, @Param('documentId') documentId: string) {
+    try {
+      const response = await this.projectService.deleteDocument(
+        Number(documentId),
+        req.user.sub,
+      );
+      return successResponse('Document deleted successfully', response);
+    } catch (error) {
+      return errorResponse('Failed to delete document', error);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('documents/:documentId/download')
+  async downloadDocument(
+    @Req() req: UserReq,
+    @Param('documentId') documentId: string,
+    @Res() res: Response,
+  ) {
+    try {
+      const document = await this.projectService.downloadDocument(
+        Number(documentId),
+        req.user.sub,
+      );
+
+      res.setHeader('Content-Type', document.mimeType);
+      res.setHeader('Content-Disposition', `attachment; filename="${document.filename}"`);
+      res.sendFile(document.filePath);
+    } catch (error) {
+      res.status(400).json(errorResponse('Failed to download document', error));
     }
   }
 }
