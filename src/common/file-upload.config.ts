@@ -2,7 +2,7 @@ import { MulterModuleOptions } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { Request } from 'express';
-
+import 'multer';
 export const multerConfig: MulterModuleOptions = {
   storage: diskStorage({
     destination: (req: Request, file: Express.Multer.File, cb) => {
