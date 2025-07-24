@@ -1,0 +1,8 @@
+
+uo_class_mark: 
+3. plava #5959ff
+11. #ff9fff
+1. crvena #f16060
+8. zelenea #2fcc2f
+18 #d34dd3 violicna
+20 #f7882f narandzasta
