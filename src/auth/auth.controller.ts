@@ -58,6 +58,17 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard)
+  @Get('currentUser')
+  async getCurrentUser(@Req() req: UserReq) {
+    try {
+      const user = await this.userService.getUserDetailsById(req.user.sub);
+      return successResponse('User fetched successfully', user);
+    } catch (error) {
+      return errorResponse(error);
+    }
+  }
+
+  @UseGuards(AuthGuard)
   @Post('logout')
   async logout(@Req() req: UserReq, @Res({ passthrough: true }) res: Response) {
     await this.authService.logout(req.user.sub);

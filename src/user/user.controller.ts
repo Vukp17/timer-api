@@ -16,8 +16,8 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
-  @Get('curentUser')
-  async getCurentUser(@Req() req: UserReq) {
+  @Get('currentUser')
+  async getCurrentUser(@Req() req: UserReq) {
     try {
       const user = await this.userService.getUserDetailsById(req.user.sub);
       return successResponse('User fetched successfully', user);
