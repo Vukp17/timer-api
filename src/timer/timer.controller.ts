@@ -192,4 +192,27 @@ export class TimerController {
       return errorResponse('Failed to generate timer report', error);
     }
   }
+
+  @UseGuards(AuthGuard)
+  @Get('search-previous')
+  async searchPreviousTimers(
+    @Req() req: UserReq,
+    @Query('q') query: string,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ) {
+    try {
+      if (!query || query.trim().length === 0) {
+        return successResponse('No search query provided', []);
+      }
+      
+      const response = await this.timerService.searchPreviousTimers(
+        req.user.sub,
+        query.trim(),
+        limit,
+      );
+      return successResponse('Previous timers found successfully', response);
+    } catch (error) {
+      return errorResponse('Failed to search previous timers', error);
+    }
+  }
 }

@@ -11,6 +11,7 @@ import {
   TagAggregation,
   ClientAggregation,
 } from './dto/report-request.dto';
+import { ExtendedTimer } from './dto/grouped-timer.dto';
 
 export interface WeeklyGroupedTimers {
   weekStart: string;
@@ -177,6 +178,10 @@ export class TimerService {
   create(timer: Prisma.TimerCreateInput) {
     return this.prismaService.timer.create({
       data: timer,
+      include: {
+        project: true,
+        tag: true,
+      },
     });
   }
   update(id: number, timer: Prisma.TimerUpdateInput) {
@@ -452,5 +457,42 @@ export class TimerService {
       timers,
       totalHours: Number(totalHours.toFixed(2)),
     };
+  }
+
+  async searchPreviousTimers(
+    userId: number,
+    query: string,
+    limit: number = 10
+  ): Promise<ExtendedTimer[]> {
+    // Split query into words and get first 3 words
+    const words = query.trim().split(/\s+/).slice(0, 3);
+    if (words.length === 0) return [];
+
+    // Create search conditions for each word
+    const searchConditions = words.map(word => ({
+      description: {
+        contains: word,
+        mode: 'insensitive' as Prisma.QueryMode,
+      },
+    }));
+
+    const timers = await this.prismaService.timer.findMany({
+      where: {
+        userId: userId,
+        endTime: { not: null }, // Only completed timers
+        OR: searchConditions,
+      },
+      include: {
+        project: true,
+        tag: true,
+      },
+      orderBy: {
+        startTime: 'desc', // Most recent first
+      },
+      take: limit,
+      distinct: ['description'], // Avoid duplicate descriptions
+    });
+
+    return timers;
   }
 }
